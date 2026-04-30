@@ -1,1 +1,639 @@
+import { useState } from “react”;
 
+const quizData = [
+{
+id: 1,
+question: “セミントラ（テルミサルタン）の主な作用機序はどれか？”,
+options: [
+“ACE（アンジオテンシン変換酵素）を阻害する”,
+“AT1受容体（アンジオテンシンⅡタイプ1受容体）を選択的に遮断する”,
+“レニンの分泌を直接抑制する”,
+“アルドステロン受容体を拮抗する”,
+],
+answer: 1,
+explanation:
+“テルミサルタンはARB（アンジオテンシンII受容体拮抗薬）であり、AT1受容体を選択的かつ持続的に遮断します。これにより糸球体内高血圧が是正され、蛋白尿の漏出が抑制されます。ACE阻害薬（ベナゼプリルなど）とは作用点が異なります。”,
+},
+{
+id: 2,
+question: “セミントラの猫における適応症として正しい組み合わせはどれか？”,
+options: [
+“慢性腎臓病における尿蛋白漏出抑制 ＋ 全身性高血圧症の治療”,
+“急性腎不全の治療 ＋ 全身性高血圧症の治療”,
+“慢性腎臓病における尿蛋白漏出抑制 ＋ 心不全の治療”,
+“糖尿病性腎症の治療 ＋ 全身性高血圧症の治療”,
+],
+answer: 0,
+explanation:
+“セミントラの効能・効果は「慢性腎臓病（慢性腎不全）における尿蛋白の漏出抑制」と「全身性高血圧症の治療」の2つです。急性腎不全・心不全・糖尿病性腎症は適応外であり、急性腎不全症例への投与は避けることとされています。”,
+},
+{
+id: 3,
+question: “慢性腎臓病（尿蛋白漏出抑制）における正しい用法・用量はどれか？”,
+options: [
+“1日2回、1.0 mg/kg（製剤0.25 mL/kg）経口投与”,
+“1日1回、2.0 mg/kg（製剤0.5 mL/kg）経口投与”,
+“1日1回、1.0 mg/kg（製剤0.25 mL/kg）経口投与”,
+“1日1回、0.5 mg/kg（製剤0.125 mL/kg）経口投与”,
+],
+answer: 2,
+explanation:
+“慢性腎臓病における尿蛋白漏出抑制の用量は、テルミサルタンとして1日1回1.0 mg/kg（製剤として0.25 mL/kg）です。全身性高血圧症の場合は2.0 mg/kg（0.5 mL/kg）と異なりますので注意が必要です。”,
+},
+{
+id: 4,
+question: “全身性高血圧症の治療でセミントラを開始する場合の初回用量はどれか？”,
+options: [
+“0.5 mg/kg（製剤0.125 mL/kg）を1日1回”,
+“1.0 mg/kg（製剤0.25 mL/kg）を1日1回”,
+“2.0 mg/kg（製剤0.5 mL/kg）を1日1回”,
+“4.0 mg/kg（製剤1.0 mL/kg）を1日1回”,
+],
+answer: 2,
+explanation:
+“全身性高血圧症の治療では、テルミサルタンとして2.0 mg/kg（製剤0.5 mL/kg）を1日1回経口投与します。収縮期血圧が適切に管理できている場合には0.5 mg/kgずつ減量でき、最大で再度2.0 mg/kgまで増量可能です。”,
+},
+{
+id: 5,
+question: “セミントラを投与してはいけない（禁忌・使用制限）猫はどれか？”,
+options: [
+“体重2 kg以上の成猫”,
+“6ヵ月齢未満の幼若猫”,
+“IRISステージⅡの慢性腎臓病猫”,
+“UPC値0.3以上の蛋白尿猫”,
+],
+answer: 1,
+explanation:
+“6ヵ月齢未満の幼若猫は安全性・有効性が確認されていないため投与禁止です。また体重2 kg未満の猫、妊娠・授乳中の猫、テルミサルタンへの過敏症猫、慢性腎不全尿毒症末期症例、急性腎不全症例も投与を避けます。”,
+},
+{
+id: 6,
+question: “セミントラの投与中に特にモニタリングが推奨される血液検査項目はどれか？”,
+options: [
+“白血球数（WBC）”,
+“血小板数（PLT）”,
+“赤血球数（RBC）”,
+“好酸球数（EOS）”,
+],
+answer: 2,
+explanation:
+“添付文書に「本剤の薬理活性に起因する影響として、推奨用量においても赤血球数の減少が認められるため、治療中は赤血球数のモニタリングが推奨される」と明記されています。貧血の進行に注意が必要です。”,
+},
+{
+id: 7,
+question: “セミントラで低血圧の臨床所見が認められた場合、または収縮期血圧が何 mmHg を下回り続けた場合に減量を考慮するか？”,
+options: [
+“100 mmHg”,
+“110 mmHg”,
+“120 mmHg”,
+“140 mmHg”,
+],
+answer: 2,
+explanation:
+“収縮期血圧が120 mmHgを下回る状態が続いた場合、または低血圧の臨床所見（虚脱・ふらつきなど）が認められた場合は、獣医師の判断で0.5 mg/kgずつ減量します。全身性高血圧症の目標収縮期血圧は120〜140 mmHgです。”,
+},
+{
+id: 8,
+question: “セミントラの主な副作用として記載されていないものはどれか？”,
+options: [
+“嘔吐・軟便・下痢などの消化器症状”,
+“肝酵素の上昇（休薬で数日中に回復）”,
+“低血圧による虚脱・ふらつき”,
+“高血糖（糖尿病様症状）”,
+],
+answer: 3,
+explanation:
+“セミントラの副作用として添付文書に記載されているのは、消化器症状（吐出・嘔吐・軟便・下痢）、肝酵素上昇、低血圧による虚脱・ふらつき、赤血球数の減少です。高血糖・糖尿病様症状は記載されていません。”,
+},
+{
+id: 9,
+question: “セミントラと他薬剤の相互作用について正しい記述はどれか？”,
+options: [
+“NSAIDs（非ステロイド性消炎鎮痛剤）との併用で降圧作用が増強する”,
+“NSAIDsとの併用で降圧作用が減弱することがある”,
+“利尿剤との併用で降圧効果が低下する”,
+“ベータ遮断剤との併用は禁忌である”,
+],
+answer: 1,
+explanation:
+“NSAIDsとの併用はセミントラの降圧作用を減弱させることがあります。逆に、利尿剤・ベータ遮断剤などの血圧降下剤との併用は本剤の効果を高める可能性があります。これらは禁忌ではありませんが、血圧推移に注意が必要です。”,
+},
+{
+id: 10,
+question: “容器開封後のセミントラの使用期限はどれか？”,
+options: [
+“1ヵ月”,
+“3ヵ月”,
+“6ヵ月”,
+“12ヵ月”,
+],
+answer: 2,
+explanation:
+“添付文書に「容器開封後の使用期限は6ヵ月」と明記されています。また、専用の計量シリンジは水洗いして乾燥させること、セミントラ10 mg/mLのシリンジは4 mg/mL製品に使用しないことも重要な取扱い上の注意点です。”,
+},
+];
+
+const TOTAL = quizData.length;
+
+export default function SemintraQuiz() {
+const [current, setCurrent] = useState(0);
+const [selected, setSelected] = useState(null);
+const [showResult, setShowResult] = useState(false);
+const [score, setScore] = useState(0);
+const [finished, setFinished] = useState(false);
+const [answers, setAnswers] = useState([]);
+
+const q = quizData[current];
+const isCorrect = selected === q.answer;
+
+function handleSelect(idx) {
+if (showResult) return;
+setSelected(idx);
+setShowResult(true);
+if (idx === q.answer) setScore((s) => s + 1);
+setAnswers((a) => […a, { correct: idx === q.answer }]);
+}
+
+function handleNext() {
+if (current + 1 >= TOTAL) {
+setFinished(true);
+} else {
+setCurrent((c) => c + 1);
+setSelected(null);
+setShowResult(false);
+}
+}
+
+function handleReset() {
+setCurrent(0);
+setSelected(null);
+setShowResult(false);
+setScore(0);
+setFinished(false);
+setAnswers([]);
+}
+
+const pct = Math.round((score / TOTAL) * 100);
+
+const grade =
+pct >= 90
+? { label: “優秀”, color: “#00d4a1”, emoji: “🏆” }
+: pct >= 70
+? { label: “合格”, color: “#4fc3f7”, emoji: “✅” }
+: pct >= 50
+? { label: “要復習”, color: “#ffb74d”, emoji: “📖” }
+: { label: “再学習”, color: “#ef5350”, emoji: “⚠️” };
+
+return (
+<div style={styles.root}>
+{/* BG decorative blobs */}
+<div style={styles.blob1} />
+<div style={styles.blob2} />
+
+```
+  <div style={styles.card}>
+    {!finished ? (
+      <>
+        {/* Header */}
+        <div style={styles.header}>
+          <span style={styles.drugLabel}>💊 SEMINTRA</span>
+          <span style={styles.progress}>
+            {current + 1} / {TOTAL}
+          </span>
+        </div>
+
+        {/* Progress bar */}
+        <div style={styles.barBg}>
+          <div
+            style={{
+              ...styles.barFill,
+              width: `${((current + (showResult ? 1 : 0)) / TOTAL) * 100}%`,
+            }}
+          />
+        </div>
+
+        {/* Score dots */}
+        <div style={styles.dots}>
+          {Array.from({ length: TOTAL }).map((_, i) => (
+            <div
+              key={i}
+              style={{
+                ...styles.dot,
+                background:
+                  i < answers.length
+                    ? answers[i].correct
+                      ? "#00d4a1"
+                      : "#ef5350"
+                    : i === current
+                    ? "#fff"
+                    : "rgba(255,255,255,0.15)",
+                transform: i === current ? "scale(1.3)" : "scale(1)",
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Question */}
+        <div style={styles.questionBox}>
+          <p style={styles.qNum}>問題 {q.id}</p>
+          <p style={styles.qText}>{q.question}</p>
+        </div>
+
+        {/* Options */}
+        <div style={styles.options}>
+          {q.options.map((opt, idx) => {
+            let bg = "rgba(255,255,255,0.05)";
+            let border = "1px solid rgba(255,255,255,0.12)";
+            let color = "#e0e0e0";
+            if (showResult) {
+              if (idx === q.answer) {
+                bg = "rgba(0,212,161,0.18)";
+                border = "1.5px solid #00d4a1";
+                color = "#00d4a1";
+              } else if (idx === selected && idx !== q.answer) {
+                bg = "rgba(239,83,80,0.18)";
+                border = "1.5px solid #ef5350";
+                color = "#ef5350";
+              }
+            } else if (selected === idx) {
+              bg = "rgba(255,255,255,0.12)";
+              border = "1.5px solid #fff";
+            }
+            return (
+              <button
+                key={idx}
+                style={{
+                  ...styles.optBtn,
+                  background: bg,
+                  border,
+                  color,
+                  cursor: showResult ? "default" : "pointer",
+                }}
+                onClick={() => handleSelect(idx)}
+              >
+                <span style={styles.optLabel}>
+                  {["A", "B", "C", "D"][idx]}
+                </span>
+                <span style={styles.optText}>{opt}</span>
+                {showResult && idx === q.answer && (
+                  <span style={styles.mark}>✓</span>
+                )}
+                {showResult && idx === selected && idx !== q.answer && (
+                  <span style={{ ...styles.mark, color: "#ef5350" }}>✗</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Explanation */}
+        {showResult && (
+          <div style={styles.explain}>
+            <div style={styles.explainHeader}>
+              <span
+                style={{
+                  color: isCorrect ? "#00d4a1" : "#ef5350",
+                  fontWeight: 700,
+                  fontSize: "1rem",
+                }}
+              >
+                {isCorrect ? "✅ 正解！" : "❌ 不正解"}
+              </span>
+            </div>
+            <p style={styles.explainText}>{q.explanation}</p>
+          </div>
+        )}
+
+        {/* Next button */}
+        {showResult && (
+          <button style={styles.nextBtn} onClick={handleNext}>
+            {current + 1 >= TOTAL ? "結果を見る" : "次の問題へ →"}
+          </button>
+        )}
+      </>
+    ) : (
+      /* Result screen */
+      <div style={styles.result}>
+        <div style={styles.resultEmoji}>{grade.emoji}</div>
+        <p style={styles.resultGrade} data-color={grade.color}>
+          {grade.label}
+        </p>
+        <div style={styles.scoreCircle}>
+          <svg viewBox="0 0 120 120" width="140" height="140">
+            <circle
+              cx="60"
+              cy="60"
+              r="50"
+              fill="none"
+              stroke="rgba(255,255,255,0.1)"
+              strokeWidth="10"
+            />
+            <circle
+              cx="60"
+              cy="60"
+              r="50"
+              fill="none"
+              stroke={grade.color}
+              strokeWidth="10"
+              strokeDasharray={`${2 * Math.PI * 50}`}
+              strokeDashoffset={`${2 * Math.PI * 50 * (1 - pct / 100)}`}
+              strokeLinecap="round"
+              transform="rotate(-90 60 60)"
+              style={{ transition: "stroke-dashoffset 1s ease" }}
+            />
+            <text
+              x="60"
+              y="55"
+              textAnchor="middle"
+              fill="#fff"
+              fontSize="26"
+              fontWeight="700"
+            >
+              {score}/{TOTAL}
+            </text>
+            <text
+              x="60"
+              y="75"
+              textAnchor="middle"
+              fill="rgba(255,255,255,0.6)"
+              fontSize="13"
+            >
+              {pct}%
+            </text>
+          </svg>
+        </div>
+
+        <div style={styles.resultDots}>
+          {answers.map((a, i) => (
+            <div
+              key={i}
+              style={{
+                ...styles.rDot,
+                background: a.correct ? "#00d4a1" : "#ef5350",
+              }}
+              title={`Q${i + 1}: ${a.correct ? "正解" : "不正解"}`}
+            />
+          ))}
+        </div>
+
+        <p style={styles.resultMsg}>
+          {pct >= 90
+            ? "完璧です！セミントラの知識はバッチリですね。"
+            : pct >= 70
+            ? "よく理解できています。あと少しで満点！"
+            : pct >= 50
+            ? "基本は押さえられています。副作用・用量を再確認しましょう。"
+            : "もう一度添付文書を読み直して挑戦しましょう！"}
+        </p>
+
+        <button style={styles.retryBtn} onClick={handleReset}>
+          🔁 もう一度挑戦する
+        </button>
+      </div>
+    )}
+  </div>
+
+  <p style={styles.footer}>
+    セミントラ 4 mg/mL 経口液猫 添付文書（2025年3月改訂）より作成
+  </p>
+</div>
+```
+
+);
+}
+
+const styles = {
+root: {
+minHeight: “100vh”,
+background: “linear-gradient(135deg, #0d1117 0%, #161b27 50%, #0d1117 100%)”,
+display: “flex”,
+flexDirection: “column”,
+alignItems: “center”,
+justifyContent: “center”,
+padding: “24px 16px”,
+fontFamily: “‘Noto Sans JP’, ‘Hiragino Sans’, sans-serif”,
+position: “relative”,
+overflow: “hidden”,
+},
+blob1: {
+position: “fixed”,
+top: “-20%”,
+right: “-10%”,
+width: “500px”,
+height: “500px”,
+borderRadius: “50%”,
+background: “radial-gradient(circle, rgba(0,212,161,0.08) 0%, transparent 70%)”,
+pointerEvents: “none”,
+},
+blob2: {
+position: “fixed”,
+bottom: “-20%”,
+left: “-10%”,
+width: “400px”,
+height: “400px”,
+borderRadius: “50%”,
+background: “radial-gradient(circle, rgba(79,195,247,0.07) 0%, transparent 70%)”,
+pointerEvents: “none”,
+},
+card: {
+width: “100%”,
+maxWidth: “680px”,
+background: “rgba(22,27,39,0.92)”,
+border: “1px solid rgba(255,255,255,0.08)”,
+borderRadius: “20px”,
+padding: “32px 28px”,
+boxShadow: “0 24px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)”,
+backdropFilter: “blur(12px)”,
+zIndex: 1,
+},
+header: {
+display: “flex”,
+justifyContent: “space-between”,
+alignItems: “center”,
+marginBottom: “16px”,
+},
+drugLabel: {
+fontSize: “0.85rem”,
+fontWeight: “700”,
+letterSpacing: “0.15em”,
+color: “#00d4a1”,
+textTransform: “uppercase”,
+},
+progress: {
+fontSize: “0.85rem”,
+color: “rgba(255,255,255,0.4)”,
+fontWeight: “600”,
+},
+barBg: {
+height: “4px”,
+background: “rgba(255,255,255,0.08)”,
+borderRadius: “2px”,
+marginBottom: “16px”,
+overflow: “hidden”,
+},
+barFill: {
+height: “100%”,
+background: “linear-gradient(90deg, #00d4a1, #4fc3f7)”,
+borderRadius: “2px”,
+transition: “width 0.4s ease”,
+},
+dots: {
+display: “flex”,
+gap: “6px”,
+justifyContent: “center”,
+marginBottom: “28px”,
+},
+dot: {
+width: “8px”,
+height: “8px”,
+borderRadius: “50%”,
+transition: “all 0.3s ease”,
+},
+questionBox: {
+marginBottom: “20px”,
+},
+qNum: {
+fontSize: “0.72rem”,
+color: “#00d4a1”,
+fontWeight: “700”,
+letterSpacing: “0.1em”,
+marginBottom: “8px”,
+textTransform: “uppercase”,
+},
+qText: {
+fontSize: “1.05rem”,
+color: “#f0f0f0”,
+lineHeight: “1.7”,
+fontWeight: “500”,
+margin: 0,
+},
+options: {
+display: “flex”,
+flexDirection: “column”,
+gap: “10px”,
+marginBottom: “20px”,
+},
+optBtn: {
+display: “flex”,
+alignItems: “flex-start”,
+gap: “12px”,
+padding: “14px 16px”,
+borderRadius: “10px”,
+textAlign: “left”,
+transition: “all 0.2s ease”,
+outline: “none”,
+width: “100%”,
+},
+optLabel: {
+minWidth: “26px”,
+height: “26px”,
+background: “rgba(255,255,255,0.1)”,
+borderRadius: “6px”,
+display: “flex”,
+alignItems: “center”,
+justifyContent: “center”,
+fontSize: “0.8rem”,
+fontWeight: “700”,
+color: “rgba(255,255,255,0.6)”,
+flexShrink: 0,
+marginTop: “1px”,
+},
+optText: {
+fontSize: “0.9rem”,
+lineHeight: “1.5”,
+flex: 1,
+},
+mark: {
+fontSize: “1.1rem”,
+flexShrink: 0,
+marginTop: “1px”,
+color: “#00d4a1”,
+},
+explain: {
+background: “rgba(0,212,161,0.06)”,
+border: “1px solid rgba(0,212,161,0.2)”,
+borderRadius: “12px”,
+padding: “16px 18px”,
+marginBottom: “20px”,
+},
+explainHeader: {
+marginBottom: “8px”,
+},
+explainText: {
+fontSize: “0.875rem”,
+color: “rgba(255,255,255,0.75)”,
+lineHeight: “1.75”,
+margin: 0,
+},
+nextBtn: {
+width: “100%”,
+padding: “14px”,
+background: “linear-gradient(135deg, #00d4a1, #4fc3f7)”,
+color: “#0d1117”,
+border: “none”,
+borderRadius: “10px”,
+fontSize: “0.95rem”,
+fontWeight: “700”,
+cursor: “pointer”,
+letterSpacing: “0.05em”,
+transition: “opacity 0.2s”,
+},
+result: {
+display: “flex”,
+flexDirection: “column”,
+alignItems: “center”,
+gap: “16px”,
+padding: “8px 0”,
+},
+resultEmoji: {
+fontSize: “3rem”,
+},
+resultGrade: {
+fontSize: “1.6rem”,
+fontWeight: “900”,
+color: “#00d4a1”,
+margin: 0,
+letterSpacing: “0.05em”,
+},
+scoreCircle: {
+margin: “8px 0”,
+},
+resultDots: {
+display: “flex”,
+gap: “8px”,
+flexWrap: “wrap”,
+justifyContent: “center”,
+},
+rDot: {
+width: “12px”,
+height: “12px”,
+borderRadius: “50%”,
+},
+resultMsg: {
+fontSize: “0.9rem”,
+color: “rgba(255,255,255,0.6)”,
+textAlign: “center”,
+lineHeight: “1.7”,
+margin: “4px 16px”,
+},
+retryBtn: {
+padding: “13px 40px”,
+background: “transparent”,
+border: “1.5px solid rgba(255,255,255,0.2)”,
+color: “#e0e0e0”,
+borderRadius: “10px”,
+fontSize: “0.95rem”,
+fontWeight: “600”,
+cursor: “pointer”,
+transition: “all 0.2s”,
+marginTop: “4px”,
+},
+footer: {
+marginTop: “20px”,
+fontSize: “0.72rem”,
+color: “rgba(255,255,255,0.2)”,
+textAlign: “center”,
+letterSpacing: “0.05em”,
+zIndex: 1,
+},
+};
